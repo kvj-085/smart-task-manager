@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TaskItem = ({ task, onToggle, onDelete }) => {
+const TaskItem = ({ task, onToggle, onDelete, onEdit }) => {
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.completed;
 
   return (
@@ -16,6 +16,7 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
       </div>
 
       <button onClick={onDelete}>❌</button>
+      <button onClick={onEdit} style={{marginLeft: '8px'}}>✏️ Edit</button>
     </div>
   );
 };

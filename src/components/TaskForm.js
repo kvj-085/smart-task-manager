@@ -1,21 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const TaskForm = ({ onAdd }) => {
+const TaskForm = ({ onAdd, onEdit, editingTask, isEditing, onCancelEdit }) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Personal');
   const [dueDate, setDueDate] = useState('');
 
+  useEffect(() => {
+    if (isEditing && editingTask) {
+      setTitle(editingTask.title || '');
+      setCategory(editingTask.category || 'Personal');
+      setDueDate(editingTask.dueDate || '');
+    } else {
+      setTitle('');
+      setCategory('Personal');
+      setDueDate('');
+    }
+  }, [isEditing, editingTask]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-
-    onAdd({
+    const taskData = {
       title,
       category,
       dueDate,
-      completed: false,
-    });
-
+      completed: isEditing && editingTask ? editingTask.completed : false,
+      ...(isEditing && editingTask && editingTask.id ? { id: editingTask.id } : {}),
+    };
+    if (isEditing) {
+      onEdit(taskData);
+    } else {
+      onAdd(taskData);
+    }
     setTitle('');
     setCategory('Personal');
     setDueDate('');
@@ -43,7 +59,10 @@ const TaskForm = ({ onAdd }) => {
         onChange={(e) => setDueDate(e.target.value)}
       />
 
-      <button type="submit">Add</button>
+      <button type="submit">{isEditing ? 'Update' : 'Add'}</button>
+      {isEditing && (
+        <button type="button" onClick={onCancelEdit} style={{marginLeft: '8px'}}>Cancel</button>
+      )}
     </form>
   );
 };
